@@ -74,9 +74,7 @@ def index():
         box-shadow: 0 4px 12px rgba(0,0,0,0.05);
     }
 
-    h3 {
-        margin-bottom: 15px;
-    }
+    h3 { margin-bottom: 15px; }
 
     input, select {
         font-size: 16px;
@@ -97,10 +95,6 @@ def index():
         border-radius: 10px;
         font-weight: bold;
         cursor: pointer;
-    }
-
-    button:hover {
-        opacity: 0.9;
     }
 
     .grid {
@@ -281,5 +275,7 @@ def delete():
     save()
     return '', 204
 
+# ⭐⭐⭐⭐ 이게 핵심 (Render용)
 if __name__ == '__main__':
-    app.run(debug=True)
+    import os
+app.run(host='0.0.0.0', port=5001)
