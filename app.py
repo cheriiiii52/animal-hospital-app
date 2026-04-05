@@ -193,7 +193,7 @@ def index():
             <div class="date">📅 {{d}}</div>
             <ul>
             {% for item in items %}
-                <li oncontextmenu="del({{loop.index0}}); return false;">
+                <li oncontextmenu="del('{{item.get('date')}}','{{item.get('name')}}','{{item.get('amount')}}'); return false;">
                 {{item.get('id')}} {{item.get('name')}} |
                 {{ "{:,}".format(item.get('amount')|int) }}원 |
                 {{item.get('method')}}
@@ -204,9 +204,13 @@ def index():
     </div>
 
     <script>
-    function del(i){
+    function del(date, name, amount){
         if(confirm("삭제할까요?")){
-            fetch('/delete/'+i,{method:'POST'}).then(()=>location.reload())
+            fetch('/delete', {
+                method:'POST',
+                headers: {'Content-Type':'application/x-www-form-urlencoded'},
+                body: `date=${date}&name=${name}&amount=${amount}`
+            }).then(()=>location.reload())
         }
     }
 
@@ -258,12 +262,24 @@ def add():
     save()
     return redirect('/')
 
-@app.route('/delete/<int:i>', methods=['POST'])
-def delete(i):
-    if 0 <= i < len(data):
-        data.pop(i)
-        save()
-    return '',204
+@app.route('/delete', methods=['POST'])
+def delete():
+    date = request.form['date']
+    name = request.form['name']
+    amount = request.form['amount']
+
+    global data
+    data = [
+        i for i in data
+        if not (
+            i.get('date') == date and
+            i.get('name') == name and
+            str(i.get('amount')) == str(amount)
+        )
+    ]
+
+    save()
+    return '', 204
 
 if __name__ == '__main__':
     app.run(debug=True)
